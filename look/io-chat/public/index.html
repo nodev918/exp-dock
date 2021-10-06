@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ioChat</title>
+
+    <style>
+        .container {
+            margin:0 auto;
+            display:flex;
+            flex-direction:column;
+            width:300px;
+            height:500px;
+            background-color: DodgerBlue;
+            border-radius: 1.5rem;
+        }
+        .chat-view{
+            margin: 0px auto;
+            width:250px;
+            height:300px;
+            background-color:gray;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+        }
+        #message-board{
+            display: block;
+            width:230px;
+            height:260px;
+            background-color:#fff;
+
+        }
+        .chat-input{
+            margin: 0 auto;
+            width:250px;
+            height:80px;
+            background-color:DodgerBlue;
+            display:flex;
+            flex-direction:column;
+
+        }
+        .chat-input-message{
+            width:250px;
+            height:30px;
+            background-color:black;
+        }
+        #send-message{
+            width:230px;
+            margin:0.35em;
+        }
+        .chat-input-function{
+            display:flex;
+            flex-direction:row;
+        }
+        .chat-input-function > div{
+            margin:5px;
+            background-color:#fff;
+            height:40px;
+            width:40px;
+            text-align: center;
+            line-height: 40px;
+            cursor:pointer;
+            font-size:13px;
+            border-radius: 0.5rem;
+        }
+    </style>
+    
+</head>
+<body>
+    <div className="container">
+        <div class="chat-view">
+            <div id="message-board"></div>
+        </div>
+            <div class="chat-input">
+                <div class="chat-input-message">
+                    <form id='send-form'>
+                        <input id='send-message' />
+                    </form>
+                </div>
+                <div class="chat-input-function">
+                    <div class="fButton" id="login">Login</div>
+                    <div class="fButton" id="qrcode">QRC</div>
+                    <div class="fButton" id="level">Level</div>
+                </div>
+            </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        var messages = document.querySelector('#message-board')
+        var form = document.querySelector('#send-form')
+        var input = document.querySelector('#send-message')
+
+        form.addEventListener('submit', (e)=>{
+            e.preventDefault()
+            if(input.value){
+                socket.emit('chat message', input.value)
+                input.value = '';
+            }
+        })
+        socket.on('chat message', (msg)=>{
+            //var item = document.createElement('div')
+            //item.textContent = msg;
+            var br = document.createElement('br')
+            messages.append(msg)
+            messages.append(br)
+            //window.scrollTo(0, document.bidy.scrollHeight);
+        })
+
+    </script>
+    <script>
+        
+
+        document.querySelector('#login').addEventListener("mouseover",(e)=>{
+            e.target.style.backgroundColor = "blue";
+        })
+        document.querySelector('#login').addEventListener("mouseout",(e)=>{
+            e.target.style.backgroundColor = "#fff";
+        })
+        document.querySelector('#qrcode').addEventListener("mouseover",(e)=>{
+            e.target.style.backgroundColor = "blue";
+        })
+        document.querySelector('#qrcode').addEventListener("mouseout",(e)=>{
+            e.target.style.backgroundColor = "#fff";
+        })
+        document.querySelector('#level').addEventListener("mouseover",(e)=>{
+            e.target.style.backgroundColor = "blue";
+        })
+        document.querySelector('#level').addEventListener("mouseout",(e)=>{
+            e.target.style.backgroundColor = "#fff";
+        })
+    </script>
+</body>
+</html>
+
+
+
+</style>

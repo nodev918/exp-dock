@@ -1,0 +1,45 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+name: $(Build.SourceBranchName).$(Build.BuildId).$(Build.SourceVersion)
+
+trigger:
+  - master
+
+resources:
+  - repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '3de27ec7-842c-471a-b535-14c9152fdad0'
+  imageRepository: 'yggdrasill'
+  containerRegistry: 'beango.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.SourceBranchName).$(Build.BuildId).$(Build.SourceVersion)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-18.04'
+
+stages:
+  - stage: Build
+    displayName: Build and push stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          name: ops-aks
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+            clean: true
+            submodules: true
+          - task: Docker@2
+            displayName: Build and push an image to container registry
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)

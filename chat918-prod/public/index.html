@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>io</title>
+  <style>
+    body {
+      margin: 0;
+      padding-bottom: 3rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #form {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 0.25rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      height: 3rem;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+    }
+
+    #input {
+      border: none;
+      padding: 0 1rem;
+      flex-grow: 1;
+      border-radius: 2rem;
+      margin: 0.25rem;
+    }
+
+    #input:focus {
+      outline: none;
+    }
+
+    #form>button {
+      background: #333;
+      border: none;
+      padding: 0 1rem;
+      margin: 0.25rem;
+      border-radius: 3px;
+      outline: none;
+      color: #fff;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      width: 60%;
+
+    }
+
+    #messages>li {
+      padding: 0.5rem 1rem;
+    }
+
+    #messages>li:nth-child(odd) {
+      background: #efefef;
+    }
+
+    .top-box {
+      display: flex;
+      width: 100%;
+      height: 400px;
+    }
+
+    .pb-panel {
+      width: 60%;
+      background-color: rgb(233, 232, 232);
+      display:flex;
+      flex-direction: column;
+      justify-self: center;
+      align-items: center;
+    }
+
+    .test-panel {
+      width: 40%;
+      background-color: rgb(201, 186, 186);
+      display:flex;
+      flex-direction: column;
+      justify-self: center;
+      align-items: center;
+    }
+
+    .bottom-box {
+      display: flex;
+      width: 100%;
+      height: 400px;
+    }
+
+    .others {
+      width: 40%;
+      background-color: bisque;
+    }
+  </style>
+
+  <style>
+    .pb-button {
+      width: 100%;
+      height: 30px;
+      border: 0;
+    }
+
+    .pb-button:hover {
+      cursor: pointer;
+      text-decoration: underline;
+      border: 1px solid grey;
+    }
+
+    .test-button {
+      width: 100%;
+      height: 30px;
+      border: 0;
+    }
+
+    .test-button:hover {
+      cursor: pointer;
+      text-decoration: underline;
+      border: 1px solid grey;
+    }
+
+    #pb-render{
+      font-size: 20px;
+      margin-top: 16px;
+      width:92%;
+    }
+    #test-render > {
+      font-size: 20px;
+      margin-top: 16px;
+      width:92%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-box">
+    <div class="pb-panel">
+      <input class="pb-button" type="button" value="protobuff" />
+      <div id="pb-render"></div>
+    </div>
+    <div class="test-panel">
+      <input class="test-button" type="button" value="fetch-api" />
+      <div id="test-render"></div>
+    </div>
+  </div>
+  <div class="bottom-box">
+    <ul id="messages"></ul>
+    <div class="others"></div>
+  </div>
+
+  <form id="form" action="">
+    <input id="name" type="text" placeholder="暱稱" />
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var UserName = ""
+    var socket = io()
+    var Pb = document.getElementById('pb-render')
+    var Test = document.getElementById('test-render')
+    var Url = 'http://stg-socket.beanfun.com:3001/ws'
+
+    socket.on('message', (msg) => {
+      //console.log("test")
+      msg
+      console.log(`#msg from server: ${msg}`)
+      renderMsg(msg)
+    })
+
+    const inp = document.getElementById('input')
+    const nam = document.getElementById('name')
+    const pbButton = document.querySelector('.pb-button')
+    const testButton = document.querySelector('.test-button')
+
+    inp.onkeydown = function (e) {
+      if (e.keyCode == 13) {
+        const msg = e.target.value
+        e.preventDefault()
+        socket.emit('message', `${UserName}說:　${msg}`)
+        e.target.value = ""
+        //renderMsg(UserName, msg)
+      }
+    }
+    nam.onkeydown = function (e) {
+      if (e.keyCode == 13) {
+        e.preventDefault()
+        UserName = e.target.value
+        console.log(UserName)
+        e.target.value = UserName
+        e.target.setAttribute("disabled", "")
+        initName(UserName, " 名字設定完成!")
+      }
+    }
+    pbButton.onclick = function (e) {
+      print("hello-protobuf", Pb)
+    }
+    testButton.onclick = function (e) {
+      print("hello-test", Test)
+      fetchServer()
+    }
+
+    function disableNameBox(item) {
+      item
+    }
+    function initName(name, data) {
+      const messageBox = document.querySelector('#messages')
+      const msg = document.createElement('div')
+      msg.innerText = `${name}:　${data}`
+      messageBox.appendChild(msg)
+    }
+    function renderMsg(data) {
+      const messageBox = document.querySelector('#messages')
+      const msg = document.createElement('div')
+      msg.innerText = `${data}`
+      messageBox.appendChild(msg)
+    }
+
+    function print(msg, target) {
+      target.append(msg)
+      target.append(document.createElement('br'))
+    }
+
+    function fetchServer(){
+      console.log("in fetchServer")
+      fetch(Url)
+            .then(res=>res.json)
+            .then(data=>{
+                console.log(data)
+            })
+    }
+  </script>
+</body>
+
+</html>

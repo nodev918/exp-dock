@@ -1,0 +1,8 @@
+package Ecommerce;
+
+message Product {
+    required bool available = 1;
+    required string name = 2;
+    required string desc = 3;
+    required float price = 4;
+}

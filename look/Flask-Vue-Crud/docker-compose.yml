@@ -1,0 +1,44 @@
+version: '3'
+services:
+  nginx:
+    image: ${DOCKER_REGISTRY}/nginx:${BRANCH}
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+      args:
+        ENV: ${BRANCH}
+    environment:
+      CERTBOT_EMAIL: "liang0816tw@gmail.com"
+    ports:
+      - "80:80"
+      - "443:443"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+  api:
+    image: ${DOCKER_REGISTRY}/server:${BRANCH}
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+      args:
+        ENV: ${BRANCH}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"
+  client:
+    image: ${DOCKER_REGISTRY}/client:${BRANCH}
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+      args:
+        ENV: ${BRANCH}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1k"
+        max-file: "3"

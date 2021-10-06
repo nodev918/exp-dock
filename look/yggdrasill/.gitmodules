@@ -1,0 +1,3 @@
+[submodule "rocks"]
+	path = rocks
+	url = https://beango.visualstudio.com/BeanGoAPP/_git/rocks

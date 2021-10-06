@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat918</title>
+<script defer src="bundle.js"></script></head>
+<body>
+    <div class="top-box">
+        <div class="test-panel">
+          <input class="ws-button" type="button" value="ws-connect" />
+          <div id="ws-render"></div>
+        </div>
+        <div class="pb-panel">
+          <input class="pb-button" type="button" value="pb-test" />
+          <div id="pb-render"></div>
+        </div>
+    
+      </div>
+      <div class="bottom-box">
+        <ul id="messages"></ul>
+        <div class="fetch-panel">
+          <div class="fetch-panel-button">http-fetch</div>
+        </div>
+      </div>
+
+      <form id="form" action="">
+        <input id="name" type="text" placeholder="暱稱" />
+        <input id="input" autocomplete="off" /><button>Send</button>
+      </form>
+</body>
+</html>

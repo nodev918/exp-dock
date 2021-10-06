@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>io</title>
+  <style>
+    body {
+      margin: 0;
+      padding-bottom: 3rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #form {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 0.25rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      height: 3rem;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+    }
+
+    #input {
+      border: none;
+      padding: 0 1rem;
+      flex-grow: 1;
+      border-radius: 2rem;
+      margin: 0.25rem;
+    }
+
+    #input:focus {
+      outline: none;
+    }
+
+    #form>button {
+      background: #333;
+      border: none;
+      padding: 0 1rem;
+      margin: 0.25rem;
+      border-radius: 3px;
+      outline: none;
+      color: #fff;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      width: 50%;
+
+    }
+
+    #messages>li {
+      padding: 0.5rem 1rem;
+    }
+
+    #messages>li:nth-child(odd) {
+      background: #efefef;
+    }
+
+    .top-box {
+      display: flex;
+      width: 100%;
+      height: 400px;
+    }
+
+    .pb-panel {
+      width: 50%;
+      background-color: rgb(233, 232, 232);
+      display: flex;
+      flex-direction: column;
+      justify-self: center;
+      align-items: center;
+    }
+
+    .test-panel {
+      width: 50%;
+      background-color: rgb(201, 186, 186);
+      display: flex;
+      flex-direction: column;
+      justify-self: center;
+      align-items: center;
+      border: 2px solid rgb(255, 255, 255);
+    }
+
+    .test-panel:hover {
+      border: 1px solid rgb(197, 195, 195)
+    }
+
+    .bottom-box {
+      display: flex;
+      width: 100%;
+      height: 400px;
+    }
+
+    .fetch-panel {
+      width: 50%;
+      background-color: bisque;
+      display: flex;
+      justify-content: center;
+      border: 1px bisque solid;
+    }
+
+    .fetch-panel:hover {
+      border: 1px grey solid;
+    }
+
+    .fetch-panel-button {
+      width: 100%;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+    }
+
+    .fetch-panel-button:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+
+
+  <style>
+    .pb-button {
+      width: 100%;
+      height: 30px;
+      border: 0;
+    }
+
+    .pb-button:hover {
+      cursor: pointer;
+      text-decoration: underline;
+      border: 1px solid grey;
+    }
+
+    .ws-button {
+      width: 100%;
+      height: 30px;
+      border: 0;
+    }
+
+    .ws-button:hover {
+      cursor: pointer;
+      text-decoration: underline;
+      border: 1px solid grey;
+    }
+
+    #pb-render {
+      font-size: 20px;
+      margin-top: 16px;
+      width: 92%;
+    }
+
+    #ws-render> {
+      font-size: 20px;
+      margin-top: 16px;
+      width: 92%;
+    }
+  </style>
+
+  <style>
+
+  </style>
+
+</head>
+
+<body>
+  <div class="top-box">
+    <div class="test-panel">
+      <input class="ws-button" type="button" value="ws-connect" />
+      <div id="ws-render"></div>
+    </div>
+    <div class="pb-panel">
+      <input class="pb-button" type="button" value="pb-test" />
+      <div id="pb-render"></div>
+    </div>
+
+  </div>
+  <div class="bottom-box">
+    <ul id="messages"></ul>
+    <div class="fetch-panel">
+      <div class="fetch-panel-button">http-fetch</div>
+    </div>
+  </div>
+
+  <!--
+      <input type="file" class="control" placeholder="hi" />
+    <br/>
+    <input type="button" class="upload" value="click" />
+-->
+
+
+
+  <form id="form" action="">
+    <input id="name" type="text" placeholder="暱稱" />
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var UserName = ""
+    var socket = io()
+
+    //var Url = 'http://stg-socket.beanfun.com:3001/ws'
+    const inp = document.getElementById('input')
+    const nam = document.getElementById('name')
+
+    var Pb = document.getElementById('pb-render')
+    const pbButton = document.querySelector('.pb-button')
+    var WS = document.getElementById('ws-render')
+    const wsButton = document.querySelector('.ws-button')
+
+    function fetchServer() {
+      console.log("in fetchServer")
+      fetch(Url)
+        .then(res => res.json)
+        .then(data => {
+          console.log(data)
+        })
+    }
+
+    if ("WebSocket" in window) {
+      //console.log("websocket checked!")
+      //var ws = new WebSocket("ws://stg-socket.beanfun.com:3001/ws");
+
+      var ws = new WebSocket("ws://localhost:8001");
+      ws.open = function () {
+        console.log("[client.ws]: open checked")
+      }
+      ws.onmessage = function (evt) {
+        //console.log("[client.ws]: onmessage checked")
+        var received_msg = evt.data;
+        console.log(`[ws]message> ${received_msg}`)
+      };
+
+      ws.onclose = function () {
+        // 关闭 websocket
+        //alert("连接已关闭...");
+      };
+    }
+
+    socket.on('connect', () => {
+      console.log(`[io]sys: connect`)
+    })
+
+    socket.on('message', (msg) => {
+      console.log(`[io]message> ${msg}`)
+      renderMsg(msg)
+    })
+
+    /*    current working     */
+    socket.on('pb', (msg) => {
+      print(`[io]message> ${msg}`, Pb)
+    })
+    pbButton.onclick = function (e) {
+      console.log("in pbButton")
+      socket.emit('pb', 'test pbButton')
+    }
+
+    /*    current working     */
+
+    inp.onkeydown = function (e) {
+      if (e.keyCode == 13) {
+        const msg = e.target.value
+        e.preventDefault()
+        socket.emit('message', `${UserName}說:　${msg}`)
+        e.target.value = ""
+        //renderMsg(UserName, msg)
+      }
+    }
+    nam.onkeydown = function (e) {
+      if (e.keyCode == 13) {
+        e.preventDefault()
+        UserName = e.target.value
+        console.log(`[io client]user set name: ${UserName}`)
+        e.target.value = UserName
+        e.target.setAttribute("disabled", "")
+        initName(UserName, " 名字設定完成!")
+      }
+    }
+    wsButton.onclick = function (e) {
+      print("ws-button test", WS)
+      //fetchServer()
+    }
+
+    function disableNameBox(item) {
+      item
+    }
+    function initName(name, data) {
+      const messageBox = document.querySelector('#messages')
+      const msg = document.createElement('div')
+      msg.innerText = `${name}:　${data}`
+      messageBox.appendChild(msg)
+    }
+    function renderMsg(data) {
+      const messageBox = document.querySelector('#messages')
+      const msg = document.createElement('div')
+      msg.innerText = `${data}`
+      messageBox.appendChild(msg)
+    }
+    function print(msg, target) {
+      target.append(msg)
+      target.append(document.createElement('br'))
+    }
+
+  </script>
+
+</body>
+
+</html>
